@@ -5,7 +5,7 @@ RESGEN=resgen
 TARGET=mono-2.0
 
 # Contains a list of acceptable targets used to build NAnt
-VALID_TARGETS := mono-2.0 mono-3.5 mono-4.0 net-2.0 net-3.5 net-4.0
+VALID_TARGETS := mono-2.0 mono-3.5 mono-4.0 mono-4.5 net-2.0 net-3.5 net-4.0
 
 ifndef DIRSEP
 ifeq ($(OS),Windows_NT)
@@ -53,6 +53,11 @@ endif
 # Loads (net,mono)-4.0 DEFINE vars
 ifeq ($(findstring 4.0,$(SELECTED_TARGET)),4.0)
 DEFINE := $(DEFINE),NET_1_0,NET_1_1,NET_2_0,NET_3_5,NET_4_0,ONLY_4_0
+endif
+
+# Loads (net,mono)-4.5 DEFINE vars
+ifeq ($(findstring 4.5,$(SELECTED_TARGET)),4.5)
+DEFINE := $(DEFINE),NET_1_0,NET_1_1,NET_2_0,NET_3_5,NET_4_0,ONLY_4_0,NET_4_5,ONLY_4_5
 endif
 
 # If TARGET var is invalid, throw an error

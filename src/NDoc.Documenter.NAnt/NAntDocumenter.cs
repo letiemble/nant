@@ -42,12 +42,21 @@ namespace NDoc.Documenter.NAnt {
     public class NAntDocumenter : BaseReflectionDocumenter {
         #region Private Instance Fields
 
-        private XslTransform _xsltTaskIndex;
-        private XslTransform _xsltTypeIndex;
-        private XslTransform _xsltFunctionIndex;
-        private XslTransform _xsltFilterIndex;
-        private XslTransform _xsltTypeDoc;
-        private XslTransform _xsltFunctionDoc;
+#if NET_4_0
+		private XslCompiledTransform _xsltTaskIndex;
+		private XslCompiledTransform _xsltTypeIndex;
+		private XslCompiledTransform _xsltFunctionIndex;
+		private XslCompiledTransform _xsltFilterIndex;
+		private XslCompiledTransform _xsltTypeDoc;
+		private XslCompiledTransform _xsltFunctionDoc;
+#else
+		private XslTransform _xsltTaskIndex;
+		private XslTransform _xsltTypeIndex;
+		private XslTransform _xsltFunctionIndex;
+		private XslTransform _xsltFilterIndex;
+		private XslTransform _xsltTypeDoc;
+		private XslTransform _xsltFunctionDoc;
+#endif
         private XmlDocument _xmlDocumentation;
         private string _resourceDirectory;
         private StringDictionary _writtenFiles = new StringDictionary();
@@ -434,12 +443,21 @@ namespace NDoc.Documenter.NAnt {
         private void MakeTransforms() {
             OnDocBuildingProgress(0);
 
-            _xsltTaskIndex = new XslTransform();
-            _xsltTypeIndex = new XslTransform();
-            _xsltFunctionIndex = new XslTransform();
-            _xsltFilterIndex = new XslTransform();
-            _xsltTypeDoc = new XslTransform();
-            _xsltFunctionDoc = new XslTransform();
+#if NET_4_0
+			_xsltTaskIndex = new XslCompiledTransform();
+			_xsltTypeIndex = new XslCompiledTransform();
+			_xsltFunctionIndex = new XslCompiledTransform();
+			_xsltFilterIndex = new XslCompiledTransform();
+			_xsltTypeDoc = new XslCompiledTransform();
+			_xsltFunctionDoc = new XslCompiledTransform();
+#else
+			_xsltTaskIndex = new XslTransform();
+			_xsltTypeIndex = new XslTransform();
+			_xsltFunctionIndex = new XslTransform();
+			_xsltFilterIndex = new XslTransform();
+			_xsltTypeDoc = new XslTransform();
+			_xsltFunctionDoc = new XslTransform();
+#endif
 
             MakeTransform(_xsltTaskIndex, "task-index.xslt");
             OnDocBuildingProgress(20);
@@ -455,7 +473,13 @@ namespace NDoc.Documenter.NAnt {
             OnDocBuildingProgress(100);
         }
 
-        private void MakeTransform(XslTransform transform, string fileName) {
+        private void MakeTransform(
+#if NET_4_0
+			XslCompiledTransform transform,
+#else
+			XslTransform transform,
+#endif
+			string fileName) {
             transform.Load(Path.Combine(Path.Combine(_resourceDirectory, "xslt"), 
                 fileName));
         }
@@ -468,7 +492,14 @@ namespace NDoc.Documenter.NAnt {
             return arguments;
         }
 
-        private void TransformAndWriteResult(XslTransform transform, XsltArgumentList arguments, string filename) {
+        private void TransformAndWriteResult(
+#if NET_4_0
+			XslCompiledTransform transform,
+#else
+			XslTransform transform,
+#endif
+			XsltArgumentList arguments,
+			string filename) {
             string path = Path.Combine(OutputDirectory, filename);
             using (StreamWriter writer = new StreamWriter(path, false, Encoding.UTF8)) {
                 transform.Transform(_xmlDocumentation, arguments, writer);
